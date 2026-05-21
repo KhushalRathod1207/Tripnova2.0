@@ -40,7 +40,7 @@ export default function OnboardingPage() {
   const router = useRouter();
   const supabase = createClient();
 
-  const [hasStarted, setHasStarted] = useState(false);
+  const [hasStarted, setHasStarted] = useState(true);
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
@@ -82,7 +82,6 @@ export default function OnboardingPage() {
           const parsed = JSON.parse(draft);
           setPreferences(parsed.preferences);
           setCurrentStep(parsed.currentStep);
-          setHasStarted(parsed.hasStarted);
           toast.info('Resuming onboarding from your saved draft!');
         }
       } catch (err: any) {
@@ -237,8 +236,6 @@ export default function OnboardingPage() {
   const handleBack = () => {
     if (currentStep > 1) {
       setCurrentStep((prev) => prev - 1);
-    } else {
-      setHasStarted(false);
     }
   };
 
@@ -252,19 +249,7 @@ export default function OnboardingPage() {
   return (
     <OnboardingLayout>
       <AnimatePresence mode="wait">
-        {!hasStarted ? (
-          <motion.div
-            key="welcome"
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -15 }}
-          >
-            <WelcomeScreen 
-              onStart={() => setHasStarted(true)} 
-              userName={profile?.name} 
-            />
-          </motion.div>
-        ) : isComplete ? (
+        {isComplete ? (
           <motion.div
             key="completion"
             initial={{ opacity: 0, scale: 0.95 }}
